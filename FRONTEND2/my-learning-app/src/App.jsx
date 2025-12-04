@@ -46,7 +46,7 @@ import {
 
 // --- Gemini API Integration ---
 
-const apiKey = "AIzaSyDYn7f-6kLs0WtlaBcPYz2lRRbap6gwMCY"; // API Key injected by environment
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY; // API Key injected by environment
 
 async function callGemini(prompt) {
   try {
