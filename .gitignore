@@ -1,0 +1,38 @@
+# Python virtual environments
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Node modules
+node_modules/
+
+# Build outputs
+build/
+dist/
+
+# Master dashboards public generated files
+public/build/
+public/dist/
+
+# Editor and OS
+.vscode/
+.idea/
+*.sublime-*
+*.log
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Other
+*.egg-info/
+pip-wheel-metadata/

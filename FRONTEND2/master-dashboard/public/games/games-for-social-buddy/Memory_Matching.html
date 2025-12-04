@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Memory Matching Game</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="main-body-3">
+    <!-- NAV BAR -->
+    <nav>
+      <div class="game-navbar">
+        <div class="game-nav"><p>Home</p></div>
+        <div class="game-nav"><p>How to play</p></div>
+        <div class="game-nav"><p>Log out</p></div>
+      </div>
+    </nav>
+
+    <!-- HEADER -->
+    <div id="Home">
+      <h1 class="heading-3">Memory Matching Game</h1>
+      <p class="desctription-3">
+        Improve memory and attention by finding matching pairs. Flip two cards — if they match they stay revealed. Match all pairs to win!
+      </p>
+    </div>
+
+    <!-- INSTRUCTIONS -->
+    <div id="instructions" class="memory-Game-inst">
+      <h2 class="h2-heading-3">How to Play</h2>
+      <ol class="memory-instructions-list">
+        <li>Click the "Play" button to begin.</li>
+        <li>Tap a card to flip it, then tap another card to find its pair.</li>
+        <li>If the cards match they stay revealed; if not, they flip back.</li>
+        <li>Find all pairs to complete the game.</li>
+      </ol>
+    </div>
+
+    <!-- PLAY BUTTON -->
+    <div class="puzzle-play">
+      <button class="play-btn">Play</button>
+    </div>
+
+    <!-- GAME AREA -->
+    <div id="memory-game-area" class="memory-game-area" style="display:none;">
+      <div id="memory-board" class="memory-board" aria-live="polite" aria-label="Memory board"></div>
+      <div id="memory-feedback" class="memory-feedback" aria-live="assertive"></div>
+      <div id="memory-end" class="memory-end" style="display:none;"></div>
+    </div>
+  </div>
+
+  <!-- ============== JavaScript (in-file) ============== -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const playBtn = document.querySelector('.play-btn');
+      const instructions = document.getElementById('instructions');
+      const homeText = document.getElementById('Home');
+      const gameArea = document.getElementById('memory-game-area');
+      const boardEl = document.getElementById('memory-board');
+      const feedbackEl = document.getElementById('memory-feedback');
+      const endEl = document.getElementById('memory-end');
+
+      const GRID_ROWS = 4;
+      const GRID_COLS = 8;
+      const PAIRS = (GRID_ROWS * GRID_COLS) / 2; // 18 pairs
+
+      // A varied set: letters, numbers, shapes, emotions, colors, simple icons
+      const ICONS = [
+        "🍎","🐶","⭐","🚗","🎈","🍰","🌼","🐠","🔔","🎵",
+        "🟣","🔷","🔴","💡","📚","⚽","🍓","🙂", // 18 unique icons
+      ];
+
+      let deck = [];          // 36 shuffled items
+      let flipped = [];       // currently flipped DOM elements
+      let matchedCount = 0;
+      let busy = false;       // prevent input during animations
+
+      playBtn.addEventListener('click', () => {
+        playBtn.style.display = 'none';
+        instructions.style.display = 'none';
+        homeText.style.display = 'none';
+        gameArea.style.display = 'block';
+        initGame();
+      });
+
+      function initGame() {
+        feedbackEl.textContent = '';
+        endEl.style.display = 'none';
+        matchedCount = 0;
+        flipped = [];
+        busy = false;
+        boardEl.innerHTML = '';
+        deck = createShuffledDeck();
+        renderBoard();
+      }
+
+      function createShuffledDeck() {
+        // Duplicate icons to make pairs
+        const pairArray = [];
+        for (let i = 0; i < PAIRS; i++) {
+          const icon = ICONS[i % ICONS.length]; // safe since ICONS length == PAIRS
+          pairArray.push(icon, icon);
+        }
+        // Fisher-Yates shuffle
+        for (let i = pairArray.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [pairArray[i], pairArray[j]] = [pairArray[j], pairArray[i]];
+        }
+        return pairArray;
+      }
+
+      function renderBoard() {
+        boardEl.style.gridTemplateColumns = `repeat(${GRID_COLS}, 1fr)`;
+        boardEl.innerHTML = '';
+        deck.forEach((icon, idx) => {
+          const card = document.createElement('button');
+          card.className = 'memory-card';
+          card.setAttribute('data-icon', icon);
+          card.setAttribute('data-index', idx);
+          card.setAttribute('aria-label', 'Hidden card');
+          card.innerHTML = `
+            <div class="card-face card-front"></div>
+            <div class="card-face card-back">${icon}</div>
+          `;
+          card.addEventListener('click', () => handleCardClick(card));
+          boardEl.appendChild(card);
+        });
+      }
+
+      function handleCardClick(card) {
+        if (busy) return;
+        if (card.classList.contains('matched')) return;
+        if (flipped.includes(card)) return;
+
+        flipCard(card);
+        flipped.push(card);
+
+        if (flipped.length === 2) {
+          busy = true;
+          const [a, b] = flipped;
+          const iconA = a.dataset.icon;
+          const iconB = b.dataset.icon;
+
+          if (iconA === iconB) {
+            // match
+            a.classList.add('matched');
+            b.classList.add('matched');
+            matchedCount += 1;
+            feedbackEl.textContent = '✅ Matched!';
+            setTimeout(() => {
+              feedbackEl.textContent = '';
+              flipped = [];
+              busy = false;
+              checkCompletion();
+            }, 600);
+          } else {
+            // not match -> flip back after delay
+            feedbackEl.textContent = '❌ Not a match';
+            setTimeout(() => {
+              unflipCard(a);
+              unflipCard(b);
+              flipped = [];
+              feedbackEl.textContent = '';
+              busy = false;
+            }, 800);
+          }
+        }
+      }
+
+      function flipCard(card) {
+        card.classList.add('flipped');
+        card.setAttribute('aria-label', 'Revealed card: ' + card.dataset.icon);
+      }
+
+      function unflipCard(card) {
+        card.classList.remove('flipped');
+        card.setAttribute('aria-label', 'Hidden card');
+      }
+
+      function checkCompletion() {
+        // matchedCount counts pairs matched
+        if (matchedCount === PAIRS) {
+          // all pairs found
+          gameArea.style.display = 'none';
+          endEl.style.display = 'block';
+          endEl.innerHTML = `<div class="memory-success">🎉 Congratulations! You matched all pairs!</div>`;
+        }
+      }
+
+      // accessibility: allow keyboard navigation (arrows + Enter)
+      boardEl.addEventListener('keydown', (e) => {
+        const focus = document.activeElement;
+        if (!focus || !focus.classList.contains('memory-card')) return;
+
+        const idx = Number(focus.dataset.index);
+        const row = Math.floor(idx / GRID_COLS);
+        const col = idx % GRID_COLS;
+
+        let targetIdx = null;
+        if (e.key === 'ArrowRight') targetIdx = idx + 1;
+        if (e.key === 'ArrowLeft') targetIdx = idx - 1;
+        if (e.key === 'ArrowDown') targetIdx = idx + GRID_COLS;
+        if (e.key === 'ArrowUp') targetIdx = idx - GRID_COLS;
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          focus.click();
+          return;
+        }
+
+        if (targetIdx !== null) {
+          if (targetIdx >= 0 && targetIdx < GRID_ROWS * GRID_COLS) {
+            const target = boardEl.querySelector(`button[data-index="${targetIdx}"]`);
+            if (target) target.focus();
+          }
+        }
+      });
+
+    });
+  </script>
+</body>
+</html>

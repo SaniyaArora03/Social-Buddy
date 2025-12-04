@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Emotion Charades Game</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="main-body-4">
+
+  <!-- NAV BAR -->
+  <nav>
+    <div class="game-navbar">
+      <div class="game-nav"><p>Home</p></div>
+      <div class="game-nav"><p>How to play</p></div>
+      <div class="game-nav"><p>Log out</p></div>
+    </div>
+  </nav>
+
+  <!-- INTRO -->
+  <div id="Home">
+    <h1 class="heading-4">Emotion Charades Game</h1>
+    <p class="desctription-4">
+      Practice identifying emotions by looking at emojis and choosing the correct emotion.
+    </p>
+  </div>
+
+  <!-- INSTRUCTIONS -->
+  <div id="instructions" class="emotion-Game-inst">
+    <h2 class="h2-heading-4">How to Play</h2>
+    <ol class="emotion-instructions-list">
+      <li>Click the "Play" button to begin.</li>
+      <li>An emoji will appear on the screen.</li>
+      <li>Choose the correct emotion from the four options.</li>
+      <li>Correct answers move to the next emoji.</li>
+      <li>Identify all emotions to complete the game.</li>
+    </ol>
+  </div>
+
+  <!-- PLAY BUTTON -->
+  <div class="puzzle-play">
+    <button class="play-btn">Play</button>
+  </div>
+
+  <!-- GAME AREA -->
+  <div id="emotion-game-area" class="emotion-game-area" style="display:none;">
+    
+    <!-- EMOJI DISPLAY -->
+    <div id="emoji-display" class="emoji-display"></div>
+
+    <!-- OPTIONS -->
+    <div id="emotion-options" class="emotion-options"></div>
+
+    <!-- FEEDBACK -->
+    <div id="emotion-feedback" class="emotion-feedback" aria-live="assertive"></div>
+
+    <!-- END AREA -->
+    <div id="emotion-end" class="emotion-end" style="display:none;"></div>
+
+  </div>
+
+</div>
+
+<!-- ========== JavaScript ========== -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  
+  const playBtn = document.querySelector('.play-btn');
+  const instructions = document.getElementById('instructions');
+  const homeText = document.getElementById('Home');
+  const gameArea = document.getElementById('emotion-game-area');
+  const emojiDisplay = document.getElementById('emoji-display');
+  const optionsArea = document.getElementById('emotion-options');
+  const feedbackEl = document.getElementById('emotion-feedback');
+  const endEl = document.getElementById('emotion-end');
+
+  // Emotion dataset
+  const emotions = [
+    { emoji: "🙂", correct: "Happy", options: ["Happy","Sad","Angry","Scared"] },
+    { emoji: "😢", correct: "Sad", options: ["Sad","Angry","Loved","Surprised"] },
+    { emoji: "😡", correct: "Angry", options: ["Happy","Angry","Scared","Confused"] },
+    { emoji: "😱", correct: "Scared", options: ["Surprised","Loved","Scared","Sleepy"] },
+    { emoji: "😍", correct: "Loved", options: ["Loved","Angry","Confused","Sad"] },
+    { emoji: "😮", correct: "Surprised", options: ["Happy","Surprised","Scared","Sleepy"] },
+    { emoji: "😕", correct: "Confused", options: ["Confused","Sad","Loved","Angry"] },
+    { emoji: "😴", correct: "Sleepy", options: ["Sleepy","Happy","Surprised","Sick"] },
+    { emoji: "🤒", correct: "Sick", options: ["Sick","Scared","Angry","Happy"] },
+    { emoji: "😏", correct: "Proud", options: ["Proud","Happy","Confused","Sad"] }
+  ];
+
+  let index = 0;
+
+  playBtn.addEventListener('click', () => {
+    playBtn.style.display = 'none';
+    instructions.style.display = 'none';
+    homeText.style.display = 'none';
+    gameArea.style.display = 'block';
+    startGame();
+  });
+
+  function startGame() {
+    index = 0;
+    feedbackEl.textContent = "";
+    endEl.style.display = "none";
+    loadEmotion(emotions[index]);
+  }
+
+  function loadEmotion(item) {
+    emojiDisplay.textContent = item.emoji;
+    optionsArea.innerHTML = "";
+    feedbackEl.textContent = "";
+
+    item.options.forEach(option => {
+      const btn = document.createElement("button");
+      btn.className = "emotion-btn";
+      btn.textContent = option;
+      btn.addEventListener("click", () => handleChoice(option, item.correct));
+      optionsArea.appendChild(btn);
+    });
+  }
+
+  function handleChoice(selected, correct) {
+    if (selected === correct) {
+      feedbackEl.textContent = "✅ Correct!";
+      feedbackEl.style.color = "#0a7";
+
+      setTimeout(() => {
+        index++;
+        if (index < emotions.length) {
+          loadEmotion(emotions[index]);
+        } else {
+          finishGame();
+        }
+      }, 600);
+
+    } else {
+      feedbackEl.textContent = "❌ Try again.";
+      feedbackEl.style.color = "#c04";
+    }
+  }
+
+  function finishGame() {
+    gameArea.style.display = "none";
+    endEl.style.display = "block";
+    endEl.innerHTML = `
+      <div class="emotion-success">🎉 You identified all emotions!</div>
+    `;
+  }
+
+});
+</script>
+</body>
+</html>

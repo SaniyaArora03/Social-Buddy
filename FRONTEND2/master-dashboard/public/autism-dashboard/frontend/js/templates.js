@@ -1,0 +1,22 @@
+const templates = [
+  {id:"T01", type:"emotion", template:"Which face shows {emotion}?"},
+  {id:"T02", type:"emotion_scenario", template:"If someone is {action}, how do they feel?"},
+  {id:"T03", type:"manners", template:"If someone gives you a gift, what should you say?"},
+  {id:"T04", type:"greeting", template:"What should you say when you meet your teacher?"},
+  {id:"T05", type:"sharing", template:"If a friend asks to play with your toy, what do you do?"},
+  {id:"T06", type:"safety", template:"When the traffic light is {color}, what should you do?"},
+  {id:"T07", type:"routine", template:"Which one do you do in the morning?"},
+  {id:"T08", type:"object_ident", template:"Which object is used for {purpose}?"},
+  {id:"T09", type:"counting", template:"How many {item} are there?"},
+  {id:"T10", type:"sequence", template:"What do you do first when you {activity}?"},
+  {id:"T11", type:"odd_one", template:"Pick the odd one out: {a}, {b}, {c}"},
+  {id:"T12", type:"emotion_matching", template:"Which picture shows someone {emotion_action}?"},
+  {id:"T13", type:"response_choice", template:"If someone says '{utterance}', what should you reply?"},
+  {id:"T14", type:"polite_request", template:"You want a pencil. What do you say?"},
+  {id:"T15", type:"indoor_outdoor", template:"Which activity is done {place}?"},
+  {id:"T16", type:"pronoun_check", template:"Which sentence is correct: '{wrong}' or '{correct}'?"},
+  {id:"T17", type:"health", template:"What should you do if you feel sick at school?"},
+  {id:"T18", type:"object_category", template:"Which of these is a {category}?"},
+  {id:"T19", type:"emotion_cause", template:"What might make someone feel {emotion}?"},
+  {id:"T20", type:"follow_rule", template:"When someone is talking, you should..."}
+];

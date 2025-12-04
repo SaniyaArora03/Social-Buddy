@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body style="margin:0; font-family:Arial, sans-serif; background:#F6F5FF;">
+  
+  <!-- NAVBAR -->
+  <div style="
+    display:flex; 
+    align-items:center; 
+    justify-content:space-between; 
+    padding:20px 40px; 
+    background:white; 
+    box-shadow:0 2px 8px rgba(0,0,0,0.06);
+  ">
+    <h2 style="margin:0; color:#6A35FF; display:flex; align-items:center; gap:8px;">
+      <span style="
+        background:#6A35FF; 
+        padding:8px 12px; 
+        border-radius:10px; 
+        color:white;
+      ">🧠</span>
+      Morning Routine Quiz
+    </h2>
+  </div>
+
+  <!-- MAIN QUIZ CARD -->
+  <div style="
+    max-width:900px; 
+    margin:40px auto; 
+    background:white; 
+    padding:32px; 
+    border-radius:20px; 
+    box-shadow:0 10px 30px rgba(0,0,0,0.08);
+  ">
+    <h1 style="font-size:30px; color:#333; margin-bottom:10px;">
+      🌞 Let's Learn Your Morning Routine!
+    </h1>
+    <p style="color:#666; font-size:16px; margin-bottom:25px;">
+      Choose the correct answer for each step in a healthy morning routine.
+    </p>
+
+    <!-- QUESTION TEMPLATE -->
+    <!-- Copy this style for all 10 questions -->
+
+    <!-- Q1 -->
+    <div style="margin-bottom:30px;">
+      <h3 style="font-size:20px; margin-bottom:10px; color:#4A4A4A;">
+        1. What is the first thing you should do after waking up?
+      </h3>
+
+      <button onclick="check(this, true)">✔️ Stretch your body</button>
+      <button onclick="check(this, false)">❌ Start using phone</button>
+      <button onclick="check(this, false)">❌ Go back to sleep</button>
+    </div>
+
+    <!-- Q2 -->
+    <div style="margin-bottom:30px;">
+      <h3 style="font-size:20px; margin-bottom:10px; color:#4A4A4A;">
+        2. What should you do before eating breakfast?
+      </h3>
+
+      <button onclick="check(this, true)">🪥 Brush your teeth</button>
+      <button onclick="check(this, false)">📺 Watch cartoons</button>
+      <button onclick="check(this, false)">🎮 Play games</button>
+    </div>
+
+    <!-- Q3 -->
+    <div style="margin-bottom:30px;">
+      <h3 style="font-size:20px; margin-bottom:10px; color:#4A4A4A;">
+        3. What is a healthy breakfast choice?
+      </h3>
+
+      <button onclick="check(this, true)">🥣 Cereal and fruit</button>
+      <button onclick="check(this, false)">🍬 Candy</button>
+      <button onclick="check(this, false)">🍟 French fries</button>
+    </div>
+
+    <!-- Q4 -->
+    <div style="margin-bottom:30px;">
+      <h3 style="font-size:20px; margin-bottom:10px; color:#4A4A4A;">
+        4. What should you do to your bed in the morning?
+      </h3>
+
+      <button onclick="check(this, true)">🛏️ Make your bed</button>
+      <button onclick="check(this, false)">❌ Leave it messy</button>
+      <button onclick="check(this, false)">❌ Throw pillows on floor</button>
+    </div>
+
+    <!-- Q5 -->
+    <div style="margin-bottom:30px;">
+      <h3 style="font-size:20px; margin-bottom:10px; color:#4A4A4A;">
+        5. What helps you wake up more?
+      </h3>
+
+      <button onclick="check(this, true)">🚿 Wash your face</button>
+      <button onclick="check(this, false)">😴 Stay in bed longer</button>
+      <button onclick="check(this, false)">📱 Scroll social media</button>
+    </div>
+
+    <!-- Q6 -->
+    <div style="margin-bottom:30px;">
+      <h3 style="font-size:20px; margin-bottom:10px; color:#4A4A4A;">
+        6. What is an important thing to check before leaving home?
+      </h3>
+
+      <button onclick="check(this, true)">🎒 Pack your school bag</button>
+      <button onclick="check(this, false)">🎮 Carry toys only</button>
+      <button onclick="check(this, false)">❌ Forget everything</button>
+    </div>
+
+    <!-- Q7 -->
+    <div style="margin-bottom:30px;">
+      <h3 style="font-size:20px; margin-bottom:10px; color:#4A4A4A;">
+        7. What should you wear after getting ready?
+      </h3>
+
+      <button onclick="check(this, true)">👕 Clean clothes</button>
+      <button onclick="check(this, false)">❌ Dirty clothes</button>
+      <button onclick="check(this, false)">❌ Pajamas</button>
+    </div>
+
+    <!-- Q8 -->
+    <div style="margin-bottom:30px;">
+      <h3 style="font-size:20px; margin-bottom:10px; color:#4A4A4A;">
+        8. What is a good morning habit for energy?
+      </h3>
+
+      <button onclick="check(this, true)">🚰 Drink water</button>
+      <button onclick="check(this, false)">❌ Drink soda</button>
+      <button onclick="check(this, false)">🍫 Eat chocolate</button>
+    </div>
+
+    <!-- Q9 -->
+    <div style="margin-bottom:30px;">
+      <h3 style="font-size:20px; margin-bottom:10px; color:#4A4A4A;">
+        9. What should you do before going to school?
+      </h3>
+
+      <button onclick="check(this, true)">👋 Say goodbye to family</button>
+      <button onclick="check(this, false)">❌ Sneak out silently</button>
+      <button onclick="check(this, false)">❌ Hide somewhere</button>
+    </div>
+
+    <!-- Q10 -->
+    <div style="margin-bottom:30px;">
+      <h3 style="font-size:20px; margin-bottom:10px; color:#4A4A4A;">
+        10. What helps you stay calm during the morning?
+      </h3>
+
+      <button onclick="check(this, true)">😮‍💨 Take a deep breath</button>
+      <button onclick="check(this, false)">❌ Shout loudly</button>
+      <button onclick="check(this, false)">❌ Rush everywhere</button>
+    </div>
+
+    <!-- COMPLETION BOX -->
+    <div id="doneBox" style="
+      display:none;
+      padding:20px; 
+      background:#E9E3FF; 
+      border-left:6px solid #7F56D9; 
+      margin-top:20px; 
+      border-radius:8px;
+      font-size:18px; 
+      color:#4A3BAA;
+    ">
+      🎉 Great job! You completed all 10 questions!
+    </div>
+
+  </div>
+
+  <!-- JS LOGIC -->
+  <script>
+    let answered = 0;
+
+    function check(btn, isCorrect) {
+      let siblings = btn.parentNode.querySelectorAll("button");
+      siblings.forEach(b => b.disabled = true);
+
+      if (isCorrect) {
+        btn.style.background = "#57D68D";
+        btn.style.color = "white";
+      } else {
+        btn.style.background = "#FF7A7A";
+        btn.style.color = "white";
+      }
+
+      answered++;
+
+      if (answered === 10) {
+        document.getElementById("doneBox").style.display = "block";
+      }
+    }
+
+    // universal styles for all buttons
+    document.querySelectorAll("button").forEach(btn => {
+      btn.style.display = "block";
+      btn.style.width = "100%";
+      btn.style.padding = "14px";
+      btn.style.marginBottom = "10px";
+      btn.style.borderRadius = "12px";
+      btn.style.border = "1px solid #DDD";
+      btn.style.fontSize = "16px";
+      btn.style.cursor = "pointer";
+      btn.style.textAlign = "left";
+      btn.style.background = "#FFF";
+    });
+  </script>
+
+</body>
+</html>

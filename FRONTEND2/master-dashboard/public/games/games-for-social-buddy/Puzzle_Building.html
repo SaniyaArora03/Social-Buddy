@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puzzle Building Game</title>
+    <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+    <div class="main-body-6">
+    <!--- NAV BAR -->
+    <nav>
+        <div class="game-navbar">
+        <div class="game-nav"><p>Home</p></div>
+        <div class="game-nav"><p>How to play</p></div>
+        <div class="game-nav"><p>Log out</p></div>
+        </div>
+    </nav>
+
+    <!-- MAIN DASHBOARD -->
+    <div id="Home">
+        <h1 class="heading-6">Welcome to the Puzzle Building Game!</h1>
+        <p class="desctription-6">
+        Challenge your mind and have fun by assembling puzzles of all shapes and sizes. Build beautiful images, solve unique visual challenges, and improve your spatial and logical reasoning skills!
+        </p>
+    </div>
+
+    <div id="instructions" class="puzzle-Game-inst">
+        <h2 class="h2-heading-6">How to Play</h2>
+        <ol class="puzzle-instructions-list">
+        <li>Click the "Play" button to start.</li>
+        <li>The original image is also shown for reference.</li>
+        <li>Drag and drop the puzzle pieces from below into the correct spots above.</li>
+        <li>Finish the puzzle to see your success message!</li>
+        </ol>
+    </div>
+
+    <div class="puzzle-play">
+        <button class="play-btn">Play</button>
+    </div>
+
+    <!-- Puzzle Area -->
+    <div id="puzzle-area" class="puzzle-area">
+    <div class="puzzle-board-wrapper">
+        <div id="puzzle-frame" class="puzzle-frame"></div>
+        <div class="reference-image">
+        <img id="reference-img" src="https://picsum.photos/300" alt="Reference Puzzle" />
+        </div>
+    </div>
+    <div id="puzzle-pieces" class="puzzle-pieces"></div>
+    </div>
+    </div>
+
+    <!-- ================== JavaScript Section ================== -->
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+    const playBtn = document.querySelector(".play-btn");
+    const puzzleFrame = document.getElementById("puzzle-frame");
+    const puzzlePieces = document.getElementById("puzzle-pieces");
+    const puzzleArea = document.getElementById("puzzle-area");
+    const instructions = document.getElementById("instructions");
+    const homeText = document.getElementById("Home");
+    const gridSize = 3; // 3x3 puzzle
+
+    const imageSrc = "https://picsum.photos/300"; // random placeholder image
+
+    playBtn.addEventListener("click", () => {
+        playBtn.style.display = "none";
+        instructions.style.display = "none";
+        homeText.style.display = "none";
+        puzzleArea.style.display = "flex";
+
+        initPuzzle();
+    });
+
+    function initPuzzle() {
+        const pieceSize = 100;
+        puzzleFrame.innerHTML = "";
+        puzzlePieces.innerHTML = "";
+
+        // Frame setup
+        puzzleFrame.style.gridTemplateColumns = `repeat(${gridSize}, ${pieceSize}px)`;
+        puzzleFrame.style.gridTemplateRows = `repeat(${gridSize}, ${pieceSize}px)`;
+
+        // Create slots in frame
+        for (let i = 0; i < gridSize * gridSize; i++) {
+        const slot = document.createElement("div");
+        slot.classList.add("puzzle-slot");
+        slot.dataset.correct = i;
+        slot.addEventListener("dragover", e => e.preventDefault());
+        slot.addEventListener("drop", dropPiece);
+        puzzleFrame.appendChild(slot);
+        }
+
+        // Create pieces (bottom area)
+        const pieces = [];
+        for (let row = 0; row < gridSize; row++) {
+        for (let col = 0; col < gridSize; col++) {
+            const index = row * gridSize + col;
+            const piece = document.createElement("div");
+            piece.classList.add("puzzle-piece");
+            piece.setAttribute("draggable", true);
+            piece.style.backgroundImage = `url(${imageSrc})`;
+            piece.style.backgroundSize = `${gridSize * 100}px ${gridSize * 100}px`;
+            piece.style.backgroundPosition = `-${col * 100}px -${row * 100}px`;
+            piece.dataset.index = index;
+            piece.addEventListener("dragstart", dragStart);
+            piece.addEventListener("dragend", dragEnd);
+            pieces.push(piece);
+        }
+        }
+
+        // Shuffle and append to bottom area
+        pieces.sort(() => Math.random() - 0.5);
+        pieces.forEach(piece => puzzlePieces.appendChild(piece));
+    }
+
+    let draggedPiece = null;
+
+    function dragStart(e) {
+        draggedPiece = this;
+        setTimeout(() => this.classList.add("dragging"), 0);
+    }
+
+    function dragEnd(e) {
+        this.classList.remove("dragging");
+        draggedPiece = null;
+    }
+
+    function dropPiece(e) {
+        if (!draggedPiece) return;
+        if (this.children.length === 0) {
+        this.appendChild(draggedPiece);
+        checkCompletion();
+        }
+    }
+
+    function checkCompletion() {
+        const slots = document.querySelectorAll(".puzzle-slot");
+        let correct = true;
+
+        slots.forEach(slot => {
+        const piece = slot.firstElementChild;
+        if (!piece || piece.dataset.index !== slot.dataset.correct) {
+            correct = false;
+        }
+        });
+
+        if (correct) {
+        setTimeout(() => {
+            alert("🎉 Puzzle Completed! Great job!");
+        }, 300);
+        }
+    }
+});
+</script>
+</body>
+</html>

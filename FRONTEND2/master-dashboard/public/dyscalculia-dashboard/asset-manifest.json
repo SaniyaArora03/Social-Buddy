@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/dyscalculia-dashboard/static/css/main.f1194193.css",
+    "main.js": "/dyscalculia-dashboard/static/js/main.dabcc17e.js",
+    "static/js/488.5d859650.chunk.js": "/dyscalculia-dashboard/static/js/488.5d859650.chunk.js",
+    "index.html": "/dyscalculia-dashboard/index.html",
+    "main.f1194193.css.map": "/dyscalculia-dashboard/static/css/main.f1194193.css.map",
+    "main.dabcc17e.js.map": "/dyscalculia-dashboard/static/js/main.dabcc17e.js.map",
+    "488.5d859650.chunk.js.map": "/dyscalculia-dashboard/static/js/488.5d859650.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.f1194193.css",
+    "static/js/main.dabcc17e.js"
+  ]
+}

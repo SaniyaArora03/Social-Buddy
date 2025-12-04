@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Math Treasure Hunt</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="main-body-1">
+    <!-- NAV BAR -->
+    <nav>
+      <div class="game-navbar">
+        <div class="game-nav"><p>Home</p></div>
+        <div class="game-nav"><p>How to play</p></div>
+        <div class="game-nav"><p>Log out</p></div>
+      </div>
+    </nav>
+
+    <!-- INTRO -->
+    <div id="Home">
+      <h1 class="heading-1">Welcome to Math Treasure Hunt!</h1>
+      <p class="desctription-1">
+        Solve all 5 math puzzles correctly to find your hidden treasure! Sharpen your mind and have fun along the way.
+      </p>
+    </div>
+
+    <!-- INSTRUCTIONS -->
+    <div id="instructions" class="math-Game-inst">
+      <h2 class="h2-heading-1">How to Play</h2>
+      <ol class="math-instructions-list">
+        <li>Click the "Play" button to begin.</li>
+        <li>All 5 math questions will appear on screen.</li>
+        <li>Answer each question and click "Submit Answers" at the bottom.</li>
+        <li>Each question will show if it's correct or not.</li>
+        <li>If all answers are correct, you’ll find the treasure!</li>
+      </ol>
+    </div>
+
+    <div class="puzzle-play">
+      <button class="play-btn">Play</button>
+    </div>
+
+    <!-- GAME AREA -->
+    <div id="math-game-area" class="math-game-area" style="display:none;">
+      <div id="questions-container" class="questions-container"></div>
+
+      <div class="submit-area">
+        <button id="submit-all" class="play-btn">Submit Answers</button>
+      </div>
+
+      <div id="result-area" class="result-area"></div>
+    </div>
+  </div>
+
+  <!-- ================= JS SECTION ================= -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const playBtn = document.querySelector(".play-btn");
+      const instructions = document.getElementById("instructions");
+      const homeText = document.getElementById("Home");
+      const gameArea = document.getElementById("math-game-area");
+      const questionsContainer = document.getElementById("questions-container");
+      const submitBtn = document.getElementById("submit-all");
+      const resultArea = document.getElementById("result-area");
+
+      let questions = [];
+
+      playBtn.addEventListener("click", () => {
+        playBtn.style.display = "none";
+        instructions.style.display = "none";
+        homeText.style.display = "none";
+        gameArea.style.display = "block";
+        initGame();
+      });
+
+      function initGame() {
+        resultArea.innerHTML = "";
+        questionsContainer.innerHTML = "";
+        questions = generateQuestions(5);
+
+        questions.forEach((q, index) => {
+          const div = document.createElement("div");
+          div.classList.add("question-box");
+          div.innerHTML = `
+            <span class="question-label">${index + 1}. ${q.text}</span>
+            <input type="number" class="answer-input" data-index="${index}" placeholder="?" />
+            <span class="feedback-icon" id="feedback-${index}"></span>
+          `;
+          questionsContainer.appendChild(div);
+        });
+      }
+
+      function generateQuestions(count) {
+        const ops = ["+", "-", "*", "/"];
+        const arr = [];
+        for (let i = 0; i < count; i++) {
+          const op = ops[Math.floor(Math.random() * ops.length)];
+          let a, b, ans, text;
+
+          if (op === "+") {
+            a = rand(1, 20);
+            b = rand(1, 20);
+            ans = a + b;
+            text = `${a} + ${b} = ?`;
+          } else if (op === "-") {
+            a = rand(5, 25);
+            b = rand(1, a - 1);
+            ans = a - b;
+            text = `${a} - ${b} = ?`;
+          } else if (op === "*") {
+            a = rand(2, 10);
+            b = rand(2, 10);
+            ans = a * b;
+            text = `${a} × ${b} = ?`;
+          } else {
+            b = rand(2, 10);
+            ans = rand(2, 10);
+            a = b * ans;
+            text = `${a} ÷ ${b} = ?`;
+          }
+
+          arr.push({ text, answer: ans });
+        }
+        return arr;
+      }
+
+      function rand(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+
+      submitBtn.addEventListener("click", () => {
+        const inputs = document.querySelectorAll(".answer-input");
+        let correctCount = 0;
+
+        inputs.forEach((input) => {
+          const index = parseInt(input.dataset.index);
+          const userAns = Number(input.value.trim());
+          const correctAns = questions[index].answer;
+          const feedbackEl = document.getElementById(`feedback-${index}`);
+
+          if (userAns === correctAns) {
+            feedbackEl.textContent = "✅";
+            feedbackEl.style.color = "green";
+            correctCount++;
+          } else {
+            feedbackEl.textContent = "❌";
+            feedbackEl.style.color = "red";
+          }
+        });
+
+        if (correctCount === questions.length) {
+            resultArea.innerHTML = `
+                <div class="treasure-success">
+                🎉 All questions are correct — you earned a treasure!
+                </div>
+            `;
+        } else {
+          resultArea.innerHTML = `
+            <p class="feedback-msg">You got ${correctCount} out of ${questions.length} correct. Try again!</p>
+          `;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

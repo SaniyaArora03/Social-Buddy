@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>SocialBuddy — Autism Dashboard (Demo)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="container">
+
+    <h1 class="title">Autism Learning Dashboard</h1>
+
+    <video id="videoStream" autoplay playsinline style="display:none"></video>
+
+    <div id="dashboard" class="dashboard-card">
+
+      <div id="status" class="status-bar">
+        <div id="progress" class="status-item">Question: <span id="qnum">0</span></div>
+        <div id="score" class="status-item">XP: <span id="xp">0</span> | Stars: <span id="stars">0</span></div>
+      </div>
+
+      <div class="question-card card">
+        <div class="MQues">
+          <p>Loading question...</p>
+        </div>
+        <div class="MAns"></div>
+      </div>
+
+      <div id="controls" class="controls">
+        <button id="btnPause" class="btn">Pause</button>
+        <button id="btnReset" class="btn btn-reset">Reset Session</button>
+      </div>
+
+      <div id="debug" class="debug-section">
+        <small>Debug: Predicted difficulty: <span id="dbgDiff">-</span> | Stress: <span id="dbgStress">-</span></small>
+      </div>
+
+    </div>
+  </div>
+  <script src="js/templates.js"></script>
+  <script src="js/distractors.js"></script>
+  <script src="js/generator.js"></script>
+  <script src="js/difficultyClient.js"></script>
+  <script src="js/stressDetector.js"></script>
+  <script src="js/app.js"></script>
+</body>
+
+  
+
+</html>

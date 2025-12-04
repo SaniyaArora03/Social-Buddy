@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sorting or Matching Game</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="main-body-5">
+    <!-- NAV BAR -->
+    <nav>
+      <div class="game-navbar">
+        <div class="game-nav"><p>Home</p></div>
+        <div class="game-nav"><p>How to play</p></div>
+        <div class="game-nav"><p>Log out</p></div>
+      </div>
+    </nav>
+
+    <!-- HEADER / INTRO -->
+    <div id="Home">
+      <h1 class="heading-5">Sorting / Matching Game</h1>
+      <p class="desctription-5">
+        Sort objects into the correct group by dragging them into the category boxes. Practice categorization and visual skills.
+      </p>
+    </div>
+
+    <!-- INSTRUCTIONS -->
+    <div id="instructions" class="sorting-Game-inst">
+      <h2 class="h2-heading-5">How to Play</h2>
+      <ol class="sorting-instructions-list">
+        <li>Click the "Play" button to start.</li>
+        <li>Drag an item from the tray into the category box it belongs to.</li>
+        <li>If it's correct, the item will stay; if not, it will return to the tray — try again!</li>
+        <li>Sort all items correctly to complete the activity.</li>
+      </ol>
+    </div>
+
+    <!-- PLAY BUTTON -->
+    <div class="puzzle-play">
+      <button class="play-btn">Play</button>
+    </div>
+
+    <!-- GAME AREA -->
+    <div id="sorting-game-area" class="sorting-game-area" style="display:none;">
+      <!-- category boxes -->
+      <div id="category-row" class="category-row" aria-live="polite"></div>
+
+      <!-- feedback -->
+      <div id="sort-feedback" class="sort-feedback" aria-live="assertive"></div>
+
+      <!-- draggable tray -->
+      <div id="tray" class="tray" aria-label="Items tray"></div>
+
+      <!-- end message -->
+      <div id="sort-end" class="sort-end" style="display:none;"></div>
+    </div>
+  </div>
+
+  <!-- ============== JavaScript ============== -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const playBtn = document.querySelector('.play-btn');
+      const instructions = document.getElementById('instructions');
+      const homeText = document.getElementById('Home');
+      const gameArea = document.getElementById('sorting-game-area');
+      const categoryRow = document.getElementById('category-row');
+      const tray = document.getElementById('tray');
+      const feedback = document.getElementById('sort-feedback');
+      const endArea = document.getElementById('sort-end');
+
+      // Category sets (3 categories each). Each entry contains key + display label.
+      const SETS = {
+        colors: {
+          title: "Sort by Color",
+          categories: [
+            { key: "red", label: "Red" },
+            { key: "green", label: "Green" },
+            { key: "blue", label: "Blue" }
+          ],
+          // items: each item has id, label (emoji/text), category key
+          items: [
+            { id: "r1", label: "🔴", cat: "red" },
+            { id: "r2", label: "🍓", cat: "red" },
+            { id: "g1", label: "🟢", cat: "green" },
+            { id: "g2", label: "🥦", cat: "green" },
+            { id: "b1", label: "🔵", cat: "blue" },
+            { id: "b2", label: "🫐", cat: "blue" }
+          ]
+        },
+        shapes: {
+          title: "Sort by Shape",
+          categories: [
+            { key: "circle", label: "Circle" },
+            { key: "triangle", label: "Triangle" },
+            { key: "square", label: "Square" }
+          ],
+          items: [
+            { id: "c1", label: "⚪", cat: "circle" },
+            { id: "c2", label: "🔵", cat: "circle" },
+            { id: "t1", label: "🔺", cat: "triangle" },
+            { id: "t2", label: "⛳", cat: "triangle" },
+            { id: "s1", label: "⬛", cat: "square" },
+            { id: "s2", label: "📦", cat: "square" }
+          ]
+        },
+        emotions: {
+          title: "Sort by Emotion",
+          categories: [
+            { key: "happy", label: "Happy" },
+            { key: "sad", label: "Sad" },
+            { key: "angry", label: "Angry" }
+          ],
+          items: [
+            { id: "h1", label: "🙂", cat: "happy" },
+            { id: "h2", label: "😃", cat: "happy" },
+            { id: "s1", label: "😢", cat: "sad" },
+            { id: "s2", label: "😭", cat: "sad" },
+            { id: "a1", label: "😡", cat: "angry" },
+            { id: "a2", label: "🤬", cat: "angry" }
+          ]
+        }
+      };
+
+      let currentSet = null;
+      let remainingToPlace = 0;
+
+      playBtn.addEventListener('click', () => {
+        playBtn.style.display = 'none';
+        instructions.style.display = 'none';
+        homeText.style.display = 'none';
+        gameArea.style.display = 'block';
+        initGame();
+      });
+
+      function initGame() {
+        feedback.textContent = '';
+        endArea.style.display = 'none';
+        categoryRow.innerHTML = '';
+        tray.innerHTML = '';
+        // Randomly pick a set
+        const keys = Object.keys(SETS);
+        const chosenKey = keys[Math.floor(Math.random() * keys.length)];
+        currentSet = SETS[chosenKey];
+
+        // Render categories
+        currentSet.categories.forEach(cat => {
+          const box = document.createElement('div');
+          box.className = 'category-box';
+          box.setAttribute('data-cat', cat.key);
+          box.setAttribute('aria-label', 'Category ' + cat.label);
+          box.innerHTML = `<div class="category-label">${cat.label}</div><div class="category-drop" data-cat="${cat.key}"></div>`;
+          // drop handlers
+          box.addEventListener('dragover', onDragOver);
+          box.addEventListener('drop', onDrop);
+          categoryRow.appendChild(box);
+        });
+
+        // Prepare items (2 per category) and shuffle
+        const items = [...currentSet.items];
+        shuffleArray(items);
+        remainingToPlace = items.length;
+
+        items.forEach(it => {
+          const tile = document.createElement('div');
+          tile.className = 'sort-item';
+          tile.setAttribute('draggable', 'true');
+          tile.setAttribute('data-id', it.id);
+          tile.setAttribute('data-cat', it.cat); // correct category
+          tile.setAttribute('aria-grabbed', 'false');
+          tile.innerHTML = `<div class="item-label">${it.label}</div>`;
+          // drag handlers
+          tile.addEventListener('dragstart', onDragStart);
+          tile.addEventListener('dragend', onDragEnd);
+          tray.appendChild(tile);
+        });
+      }
+
+      // Drag handlers
+      let dragged = null;
+      function onDragStart(e) {
+        dragged = this;
+        this.classList.add('dragging');
+        this.setAttribute('aria-grabbed', 'true');
+        // Use dataTransfer for desktop
+        if (e.dataTransfer) {
+          e.dataTransfer.setData('text/plain', this.dataset.id);
+          // allow move
+          e.dataTransfer.effectAllowed = 'move';
+        }
+        // small visual cue
+        feedback.textContent = '';
+      }
+      function onDragEnd(e) {
+        if (dragged) {
+          dragged.classList.remove('dragging');
+          dragged.setAttribute('aria-grabbed', 'false');
+        }
+        dragged = null;
+      }
+      function onDragOver(e) {
+        e.preventDefault();
+        // allow drop visual
+      }
+      function onDrop(e) {
+        e.preventDefault();
+        const dropCat = this.getAttribute('data-cat') || this.dataset.cat;
+        // Determine dragged element (dataTransfer fallback)
+        let card = dragged;
+        if (!card && e.dataTransfer) {
+          const id = e.dataTransfer.getData('text/plain');
+          card = tray.querySelector(`[data-id="${id}"]`);
+        }
+        if (!card) return;
+
+        const correctCat = card.getAttribute('data-cat');
+        if (correctCat === dropCat) {
+          // correct -> append to the category's drop area and lock
+          const dropArea = this.querySelector('.category-drop');
+          dropArea.appendChild(card);
+          card.classList.add('placed');
+          card.setAttribute('draggable', 'false');
+          remainingToPlace -= 1;
+          feedback.textContent = '✅ Correct!';
+          setTimeout(() => feedback.textContent = '', 700);
+          checkCompletion();
+        } else {
+          // wrong -> brief feedback and return (we don't move the element)
+          feedback.textContent = '❌ Try again';
+          setTimeout(() => feedback.textContent = '', 900);
+          // shake animation to indicate wrong drop
+          card.classList.add('wrong');
+          setTimeout(() => card.classList.remove('wrong'), 700);
+        }
+      }
+
+      function checkCompletion() {
+        if (remainingToPlace === 0) {
+          gameArea.style.display = 'none';
+          endArea.style.display = 'block';
+          endArea.innerHTML = `<div class="sort-success">🎉 Great job! You sorted all items!</div>`;
+        }
+      }
+
+      // Utility
+      function shuffleArray(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+      }
+
+      // Basic touch support: allow touch to pick up and drop (tap to pick, tap box to drop)
+      // This is a simple fallback for touch devices
+      tray.addEventListener('click', (e) => {
+        // if tapped on an item that is draggable, mark it as "picked"
+        const item = e.target.closest('.sort-item');
+        if (!item || item.classList.contains('placed')) return;
+        // toggle picked state
+        const alreadyPicked = tray.querySelector('.picked');
+        if (alreadyPicked && alreadyPicked !== item) {
+          alreadyPicked.classList.remove('picked');
+        }
+        item.classList.toggle('picked');
+      });
+      // drop by tapping a category box
+      categoryRow.addEventListener('click', (e) => {
+        const box = e.target.closest('.category-box');
+        if (!box) return;
+        const picked = tray.querySelector('.picked');
+        if (!picked) return;
+        // simulate drop
+        const fakeEvent = { preventDefault: () => {}, dataTransfer: null };
+        // call drop logic with box as context
+        // we temporarily set dragged to picked
+        dragged = picked;
+        onDrop.call(box, fakeEvent);
+        // clear picked state
+        picked.classList.remove('picked');
+        dragged = null;
+      });
+
+    });
+  </script>
+</body>
+</html>

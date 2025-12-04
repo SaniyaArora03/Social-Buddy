@@ -1,0 +1,161 @@
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #f7f8fc;
+}
+
+/******** NAVBAR ********/
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 40px;
+  background: white;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  position: sticky;
+  top: 0;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  font-size: 24px;
+}
+
+.brand {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.nav-right a {
+  margin: 0 12px;
+  text-decoration: none;
+  color: #555;
+  font-weight: 500;
+}
+
+.nav-right a.active {
+  color: #7F56D9;
+}
+
+.user {
+  background: #EEE;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 18px;
+}
+
+/******** HERO SECTION ********/
+.hero {
+  margin: 40px auto;
+  width: 85%;
+  background: linear-gradient(135deg, #7F56D9, #9E77ED);
+  color: white;
+  padding: 40px;
+  border-radius: 34px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tag {
+  background: rgba(255,255,255,0.2);
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+.hero-text h2 {
+  font-size: 46px;
+  font-weight: 800;
+  margin: 10px 0;
+}
+
+.hero-text p {
+  margin-bottom: 20px;
+}
+
+.hero-buttons .btn {
+  display: inline-block;
+  padding: 12px 20px;
+  border-radius: 12px;
+  margin-right: 10px;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.primary {
+  background: white;
+  color: #7F56D9;
+}
+
+.secondary {
+  background: rgba(255,255,255,0.2);
+  color: white;
+}
+
+.hero-image .badge {
+  font-size: 90px;
+}
+
+/******** CARDS ********/
+.cards {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  width: 85%;
+  margin: 40px auto;
+}
+
+.card {
+  background: white;
+  padding: 22px;
+  border-radius: 20px;
+  width: 32%;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.card-icon {
+  font-size: 30px;
+}
+
+.card h3 {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #777;
+}
+
+.big {
+  margin: 6px 0;
+  font-size: 26px;
+}
+
+.task {
+  margin: 6px 0;
+}
+
+.inactive {
+  opacity: 0.5;
+}
+
+.xp-bar {
+  background: #eee;
+  height: 8px;
+  border-radius: 10px;
+  margin: 6px 0 10px 0;
+}
+
+.fill {
+  background: #34c759;
+  width: 10%;
+  height: 100%;
+  border-radius: 10px;
+}
+
+.next {
+  font-size: 12px;
+  color: #7a7a7a;
+}

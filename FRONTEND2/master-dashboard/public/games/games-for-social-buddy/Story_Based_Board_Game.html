@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Story-Based Board Game</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="main-body-2">
+    <!-- NAV BAR -->
+    <nav>
+      <div class="game-navbar">
+        <div class="game-nav"><p>Home</p></div>
+        <div class="game-nav"><p>Levels</p></div>
+        <div class="game-nav"><p>How to play</p></div>
+        <div class="game-nav"><p>Log out</p></div>
+      </div>
+    </nav>
+
+    <!-- HEADER / INTRO -->
+    <div id="Home">
+      <h1 class="heading-2">Welcome to the Story-Based Board Game!</h1>
+      <p class="desctription-2">
+        Explore a short adventure that mixes story, math and logic. Answer questions to move along the board — reach the final tile to complete the story.
+      </p>
+    </div>
+
+    <!-- INSTRUCTIONS -->
+    <div id="instructions" class="story-Game-inst">
+      <h2 class="h2-heading-2">How to Play</h2>
+      <ol class="story-instructions-list">
+        <li>Click the "Play" button to start the adventure.</li>
+        <li>Read the short scene and choose one of the four options.</li>
+        <li>Correct answers move your token forward on the board.</li>
+        <li>After you clear all 5 scenes, you complete the story.</li>
+      </ol>
+    </div>
+
+    <!-- PLAY BUTTON -->
+    <div class="puzzle-play">
+      <button class="play-btn">Play</button>
+    </div>
+
+    <!-- GAME AREA (hidden until Play) -->
+    <div id="story-game-area" class="story-game-area" style="display:none;">
+      <!-- Board (progress path) -->
+      <div id="board" class="board" aria-hidden="true"></div>
+
+      <!-- Story and choices -->
+      <div class="story-stage">
+        <div id="story-card" class="story-card" aria-live="polite">
+          <div id="scene-text" class="scene-text">Scene text will appear here.</div>
+
+          <div id="options" class="options" role="list">
+            <!-- 4 option buttons will be injected here -->
+          </div>
+
+          <div id="scene-feedback" class="scene-feedback" aria-live="assertive"></div>
+        </div>
+      </div>
+
+      <!-- End message area -->
+      <div id="end-area" class="end-area" style="display:none;"></div>
+    </div>
+  </div>
+
+  <!-- ================== JavaScript Section ================== -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const playBtn = document.querySelector('.play-btn');
+      const instructions = document.getElementById('instructions');
+      const homeText = document.getElementById('Home');
+      const gameArea = document.getElementById('story-game-area');
+      const boardEl = document.getElementById('board');
+      const sceneText = document.getElementById('scene-text');
+      const optionsEl = document.getElementById('options');
+      const feedbackEl = document.getElementById('scene-feedback');
+      const endArea = document.getElementById('end-area');
+
+      // Scenes: each scene mixes story + math/logic where appropriate
+      const scenes = [
+        {
+          text: "You arrive at a friendly village. The villagers ask you to count fruit baskets to share fairly. There are 12 apples and 3 children. How many apples each child will get?",
+          options: ["3", "4", "6", "2"],
+          correctIndex: 1 // 12 / 3 = 4
+        },
+        {
+          text: "Walking on the path you find footprints that split into two trails. The left trail has small prints, the right trail has large prints. If you are looking for a small animal, which trail is best?",
+          options: ["Left", "Right", "Both", "Neither"],
+          correctIndex: 0
+        },
+        {
+          text: "A wooden bridge needs 5 planks to cross safely. You have 2 planks and your friend gives you 4 more. How many planks will you have in total?",
+          options: ["6", "7", "5", "8"],
+          correctIndex: 0 // 2 + 4 = 6
+        },
+        {
+          text: "You see three locked chests with numbers: A=2, B=4, C=6. The riddle says 'Choose the chest whose number is half of 8.' Which chest do you pick?",
+          options: ["A", "B", "C", "None"],
+          correctIndex: 1 // 4 is half of 8
+        },
+        {
+          text: "Near the temple, a puzzle: 'If you add me to myself and get 10, what number am I?'",
+          options: ["3", "5", "6", "4"],
+          correctIndex: 1 // 5 + 5 = 10
+        }
+      ];
+
+      let currentIndex = 0;
+      let boardTiles = [];
+
+      playBtn.addEventListener('click', () => {
+        playBtn.style.display = 'none';
+        instructions.style.display = 'none';
+        homeText.style.display = 'none';
+        gameArea.style.display = 'block';
+        initBoard();
+        loadScene(0);
+      });
+
+      function initBoard() {
+        boardEl.innerHTML = '';
+        boardTiles = [];
+        for (let i = 0; i < scenes.length; i++) {
+          const tile = document.createElement('div');
+          tile.className = 'board-tile';
+          tile.textContent = i + 1;
+          boardEl.appendChild(tile);
+          boardTiles.push(tile);
+        }
+        highlightTile(0);
+      }
+
+      function highlightTile(i) {
+        boardTiles.forEach((t, idx) => {
+          t.classList.toggle('active-tile', idx === i);
+        });
+      }
+
+      function loadScene(index) {
+        currentIndex = index;
+        const s = scenes[index];
+        sceneText.textContent = s.text;
+        feedbackEl.textContent = '';
+        optionsEl.innerHTML = '';
+
+        // Create 4 option buttons
+        s.options.forEach((opt, idx) => {
+          const btn = document.createElement('button');
+          btn.className = 'option-btn';
+          btn.type = 'button';
+          btn.setAttribute('data-idx', idx);
+          btn.textContent = opt;
+          btn.addEventListener('click', () => handleChoice(idx));
+          optionsEl.appendChild(btn);
+        });
+      }
+
+      function handleChoice(selectedIdx) {
+        const correctIdx = scenes[currentIndex].correctIndex;
+        if (selectedIdx === correctIdx) {
+          feedbackEl.textContent = '✅ Correct! You moved ahead.';
+          feedbackEl.style.color = '#0a7';
+          // mark tile as completed visually
+          boardTiles[currentIndex].classList.add('completed-tile');
+
+          // move to next scene or finish
+          if (currentIndex + 1 < scenes.length) {
+            // small delay so child sees the "Correct!" feedback
+            setTimeout(() => {
+              loadScene(currentIndex + 1);
+              highlightTile(currentIndex);
+            }, 700);
+          } else {
+            // finished all scenes
+            setTimeout(() => {
+              finishGame();
+            }, 700);
+          }
+        } else {
+          feedbackEl.textContent = '❌ Try again.';
+          feedbackEl.style.color = '#c04';
+        }
+      }
+
+      function finishGame() {
+        gameArea.style.display = 'none';
+        endArea.style.display = 'block';
+        endArea.innerHTML = `
+          <div class="story-complete">
+            🎉 You reached the end of the story — great job exploring the adventure!
+          </div>
+        `;
+      }
+
+      // Accessible keyboard support: allow option selection with number keys 1-4
+    document.addEventListener('keydown', (e) => {
+        if (gameArea.style.display === 'block' && ['1', '2', '3', '4'].includes(e.key)) {
+            const idx = Number(e.key) - 1;
+            const btn = optionsEl.querySelector(`button[data-idx="${idx}"]`);
+            if (btn) btn.click();
+        }
+        });
+    });
+  </script>
+</body>
+</html>
